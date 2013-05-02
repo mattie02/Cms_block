@@ -78,6 +78,7 @@ function display_cms_cpt_information_meta_box( $cpt_cms ) {
 	$position = esc_html( get_post_meta( $cpt_cms->ID, 'cpt_cms_position', true ) );
 	$description = esc_html( get_post_meta( $cpt_cms->ID, 'cpt_cms_description', true ) );
 ?>
+	<?php echo the_ID(); ?>
 	<h4>Page Postition</h4>
 	<input type="text" name="cpt_cms_position" value="<?php echo $position; ?>">
 	<p>Location of the Block on the page</p>
@@ -195,11 +196,11 @@ function mrh_add_taxonomy_filters() {
 
 function mrh_cms_shortcode($attrs) {
 	shortcode_atts(array(
-            'slug' => 'undefined',
-            'value' => 'undefined'
+            'value' => 'undefined',
+            'id' => 'undefined'
         ), $attrs);
 
-	 if ('undefined' === $attrs['slug'] || 'undefined' === $attrs['value']) {
+	 if ('undefined' === $attrs['value'] || 'undefined' === $attrs['id']) {
             return NULL;
         } else {
             $cms_block = get_posts(array('post_type' => 'cms_cpt', 'order' => 'ASC', 'posts_per_page' => wp_count_posts('cms_cpt')->publish));
@@ -210,24 +211,29 @@ function mrh_cms_shortcode($attrs) {
             } //End foreach $cms_blocks
             
             if ('thumbnail' == $attrs['value']) {
-                $thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $posts[$attrs['slug']]->ID ), 'single-post-thumbnail' );
+                $thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $attrs['id'] ), 'single-post-thumbnail' );
                 return $thumbnail[0];
             } elseif ('position' == $attrs['value']) {
-            	$position = get_post_meta( $posts[$attrs['slug']]->ID, 'cpt_cms_position', true);
+            	$position = get_post_meta( $attrs['id'], 'cpt_cms_position', true);
             	return $position;
         	} elseif ('description' == $attrs['value']) {
-	        	$description = get_post_meta( $posts[$attrs['slug']]->ID, 'cpt_cms_description', true);
+	        	$description = get_post_meta( $attrs['id'], 'cpt_cms_description', true);
 	        	return $description;
 	        } elseif ('page' == $attrs['value']) {
-	        	$page = get_the_term_list( $posts[$attrs['slug']]->ID, 'cms_block_page', '', ', ', '');
+	        	$page = get_the_term_list( $attrs['id'], 'cms_block_page', '', ', ', '');
 	        	return $page;
             } else {
-                $post = get_object_vars($posts[$attrs['slug']]);
-                return do_shortcode($post[$attrs['value']]);
-            }
+            	foreach($posts as $post) {
+            		if ($post->ID == $attrs['id']) {
+            			echo $post->$attrs['value'];
+            		}
+            	}
+            	
+            } 
         }
 }
 
 add_shortcode('cms_block', 'mrh_cms_shortcode');
+
 
 
