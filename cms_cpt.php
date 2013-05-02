@@ -84,7 +84,7 @@ function display_cms_cpt_information_meta_box( $cpt_cms ) {
 	<h4>Description</h4>
 	<textarea id="excerpt" name="cpt_cms_description"/><?php echo $description; ?></textarea>
 	<h4>Shortcode Template (Pages, Posts)</h4>
-	<p>[ocg_block slug="<strong>PAGE SLUG</strong>" value="<strong>ATTRIBUTE</strong>"]<p>
+	<p>[cms_block slug="<strong>PAGE SLUG</strong>" value="<strong>ATTRIBUTE</strong>"]<p>
 	<h4>PAGE SLUG</h4>
 	<p>Permalink: http://matt.dev/plugin/?cms_cpt=<strong>SLUG</strong></p>
 	<h4>ATTRIBUTES</h4>
