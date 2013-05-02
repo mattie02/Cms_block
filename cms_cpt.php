@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: CMS cpt
+Plugin Name: CMS Block System 
 Plugin URI: http://flightofthedodo.com/
-Description: Creates a cutst
+Description: Creates a custom cms block system
 Version: 1.0 beta
 Author: Matthew Hansen
 Author URI: http://flightofthedodo.com/
@@ -37,7 +37,8 @@ array(
 'menu_position' => 4,
 'supports' =>
 array( 'title', 'editor', 'thumbnail', 'excerpt' ),
-'taxonomies' => array( '' )
+'taxonomies' => array( '' ),
+'menu_icon' => plugins_url('images/16.png', __FILE__ )
 )
 );
 
@@ -88,11 +89,17 @@ function display_cms_cpt_information_meta_box( $cpt_cms ) {
 	<p>Permalink: http://matt.dev/plugin/?cms_cpt=<strong>SLUG</strong></p>
 	<h4>ATTRIBUTES</h4>
 	<ul>
-		<li><strong>post_title</strong> - Pulls the title of the post</li>
-		<li><strong>post_content</strong> - Pulls the main content of the post</li>
-		<li><strong>post_excerpt</strong> - Pulls the excerpt of the post</li>
-		<li><strong>thumbnail</strong> - Pulls the SRC of the post featured image</li>
+		<li><strong>post_title</strong> - Pulls the title of the block</li>
+		<li><strong>post_content</strong> - Pulls the main content of the block</li>
+		<li><strong>post_excerpt</strong> - Pulls the excerpt of the block</li>
+		<li><strong>position</strong> - Pulls the intended postition(s) of the block - not for production use</li>
+		<li><strong>description</strong> - Pulls any notes the block may contain - not for production use</li>
+		<li><strong>page</strong> - Pulls the page(s) the cms block is intended to be on - not for production use</li>
+		<li><strong>thumbnail</strong> - Pulls the SRC of the block featured image</li>
 	</ul>	
+	<h4>!NOTE: Thumbnail</h4>
+	<p>this ATTRIBUTE only returns the SRC of the imgage, you will need to pull it into a proper "img src="<strong>ATTRIBUTE</strong>" Tag.</p>
+
 <?php }
 
 add_action( 'save_post', 'mrh_add_cms_cpt_description_field', 10, 2 );
@@ -205,6 +212,15 @@ function mrh_cms_shortcode($attrs) {
             if ('thumbnail' == $attrs['value']) {
                 $thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $posts[$attrs['slug']]->ID ), 'single-post-thumbnail' );
                 return $thumbnail[0];
+            } elseif ('position' == $attrs['value']) {
+            	$position = get_post_meta( $posts[$attrs['slug']]->ID, 'cpt_cms_position', true);
+            	return $position;
+        	} elseif ('description' == $attrs['value']) {
+	        	$description = get_post_meta( $posts[$attrs['slug']]->ID, 'cpt_cms_description', true);
+	        	return $description;
+	        } elseif ('page' == $attrs['value']) {
+	        	$page = get_the_term_list( $posts[$attrs['slug']]->ID, 'cms_block_page', '', ', ', '');
+	        	return $page;
             } else {
                 $post = get_object_vars($posts[$attrs['slug']]);
                 return do_shortcode($post[$attrs['value']]);
