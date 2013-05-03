@@ -78,29 +78,52 @@ function display_cms_cpt_information_meta_box( $cpt_cms ) {
 	$position = esc_html( get_post_meta( $cpt_cms->ID, 'cpt_cms_position', true ) );
 	$description = esc_html( get_post_meta( $cpt_cms->ID, 'cpt_cms_description', true ) );
 ?>
-	<?php echo the_ID(); ?>
+	<h3>Block ID = <?php echo the_ID(); ?></h4>
 	<h4>Page Postition</h4>
 	<input type="text" name="cpt_cms_position" value="<?php echo $position; ?>">
 	<p>Location of the Block on the page</p>
 	<h4>Description</h4>
 	<textarea id="excerpt" name="cpt_cms_description"/><?php echo $description; ?></textarea>
 	<h4>Shortcode Template (Pages, Posts)</h4>
-	<p>[cms_block slug="<strong>PAGE SLUG</strong>" value="<strong>ATTRIBUTE</strong>"]<p>
+	<p>[cms_block id="<strong>BLOCK ID</strong>" value="<strong>ATTRIBUTE</strong>"]<p>
 	<h4>PAGE SLUG</h4>
 	<p>Permalink: http://matt.dev/plugin/?cms_cpt=<strong>SLUG</strong></p>
 	<h4>ATTRIBUTES</h4>
+	<a href="<?php echo plugins_url('/Cms_block/snippets.txt'); ?>" target="_blank">More information and snippets</a>
 	<ul>
 		<li><strong>post_title</strong> - Pulls the title of the block</li>
+			<ul>
+				<li>[cms_block id="<?php echo the_ID(); ?>" value="post_title"]</li>
+			</ul>
 		<li><strong>post_content</strong> - Pulls the main content of the block</li>
+			<ul>
+				<li>[cms_block id="<?php echo the_ID(); ?>" value="post_content"]</li>
+			</ul>
 		<li><strong>post_excerpt</strong> - Pulls the excerpt of the block</li>
+			<ul>
+				<li>[cms_block id="<?php echo the_ID(); ?>" value="post_excerpt"]</li>
+			</ul>
 		<li><strong>position</strong> - Pulls the intended postition(s) of the block - not for production use</li>
+			<ul>
+				<li>[cms_block id="<?php echo the_ID(); ?>" value="position"]</li>
+			</ul>
 		<li><strong>description</strong> - Pulls any notes the block may contain - not for production use</li>
+			<ul>
+				<li>[cms_block id="<?php echo the_ID(); ?>" value="description"]</li>
+			</ul>
 		<li><strong>page</strong> - Pulls the page(s) the cms block is intended to be on - not for production use</li>
+			<ul>
+				<li>[cms_block id="<?php echo the_ID(); ?>" value="page"]</li>
+			</ul>
 		<li><strong>thumbnail</strong> - Pulls the SRC of the block featured image</li>
+			<ul>
+				<li>[cms_block id="<?php echo the_ID(); ?>" value="thumbnail"]</li>
+			</ul>
 	</ul>	
 	<h4>!NOTE: Thumbnail</h4>
 	<p>this ATTRIBUTE only returns the SRC of the imgage, you will need to pull it into a proper "img src="<strong>ATTRIBUTE</strong>" Tag.</p>
-
+	<h4>!NOTE: Pull From Template</h4>
+	<p>to pull for a template or in a php block wrap in the do_shortcode('[cms_block id="<?php echo the_ID(); ?>" value="<strong>ATTRIBUTE</strong>"]');</p>
 <?php }
 
 add_action( 'save_post', 'mrh_add_cms_cpt_description_field', 10, 2 );
@@ -125,6 +148,7 @@ function mrh_my_edit_cms_columns( $columns ) {
 		'title' => __( 'title' ),
 		'page' => __( 'On Page' ),
 		'position' => __( 'Page Position' ),
+		'ID' => __( 'Block ID' ),
 		'date' => __( 'Date' )
 	);
 
@@ -143,12 +167,16 @@ function mrh_my_manage_cms_columns( $columns, $post_id ) {
 		case "position":
 			echo get_post_meta($post->ID, 'cpt_cms_position', true);
 		 	break;
+		case "ID": 
+			echo the_ID();
+			break; 
 	}
 }
 
 add_filter( 'manage_edit-cms_cpt_sortable_columns', 'mrh_sort_me');
 
 function mrh_sort_me( $columns ) {
+	$columns['ID'] = 'ID';
 	$columns['page'] = 'page';
 	$columns['position'] = 'position';
 	return $columns;
@@ -171,7 +199,6 @@ add_action( 'restrict_manage_posts', 'mrh_add_taxonomy_filters' );
 
 function mrh_add_taxonomy_filters() {
 	global $typenow;
- 
 	// an array of all the taxonomyies you want to display. Use the taxonomy name or slug
 	$taxonomies = array('cms_block_page');
  

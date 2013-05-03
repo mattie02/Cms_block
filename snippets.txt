@@ -1,0 +1,32 @@
+//use in php template pages 
+<?php echo do_shortcode('[cms_block id="BLOCK ID" value="ATTRIBUTE"]') ?>
+
+//to pull the blocks featured image in php template pages
+<img src="<?php echo do_shortcode('[cms_block id="BLOCK ID" value="thumbnail"]')">
+
+//use in post or page post_types
+[cms_block id="BLOCK ID" value="ATTRIBUTE"]
+
+//to pull the blocks featured image in php template pages
+<img src="[cms_block id="BLOCK ID" value="thumbnail"]">
+
+//PRIMARY ATTRIBUTES 
+post_content
+post_title
+post_excerpt
+postition
+description
+thumbnail 
+
+//SECONDARY ATTRIBUTES
+ID
+post_date
+post_date_gmt
+post_name
+post_modified
+post_modified_gmt
+guid
+
+
+
+
