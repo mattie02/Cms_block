@@ -3,7 +3,7 @@
 Plugin Name: CMS Block System 
 Plugin URI: http://flightofthedodo.com/
 Description: Creates a custom cms block system
-Version: 1.0 beta
+Version: 1.0.1
 Author: Matthew Hansen
 Author URI: http://flightofthedodo.com/
 License: GPLv2
@@ -252,7 +252,8 @@ function mrh_cms_shortcode($attrs) {
             } else {
             	foreach($posts as $post) {
             		if ($post->ID == $attrs['id']) {
-            			echo $post->$attrs['value'];
+            			$result = $post->$attrs['value'];
+				return do_shortcode($result);
             		}
             	}
             	
